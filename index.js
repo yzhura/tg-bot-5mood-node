@@ -50,7 +50,6 @@ app.get("/web-data", (req, res) => {
 })
 
 app.post("/web-data", async (req, res) => {
-  console.log('req: ', req);
   const { queryId, order, totalPrice } = req.body;
   console.log('totalPrice: ', totalPrice);
   try {
