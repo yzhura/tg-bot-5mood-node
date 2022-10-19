@@ -8,15 +8,10 @@ const webApp = "https://regal-bonbon-664a6e.netlify.app";
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
 
-const corsOptions = {
-    origin: {webApp},
-    optionsSuccessStatus: 200
-}
-
 const app = express();
 
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 
 // Matches "/echo [whatever]"
 bot.onText(/\/echo (.+)/, (msg, match) => {
