@@ -45,6 +45,10 @@ bot.on("message", async (msg) => {
 //   bot.sendMessage(chatId, "Шо ты хочешь? Корсетов нет! Закончились");
 });
 
+app.get("/", (req, res) => {
+  return res.status(200).json({ test: 'hello'})
+})
+
 app.get("/web-data", (req, res) => {
     return res.status(200).json({ test: 'test'})
 })
