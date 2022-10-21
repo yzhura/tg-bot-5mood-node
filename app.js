@@ -36,14 +36,20 @@ app.get("/web-data", (req, res) => {
 
 app.post("/web-data", async (req, res) => {
   const { queryId, order, totalPrice } = req.body;
-  console.log("totalPrice: ", totalPrice);
+
+  const order_message = order.reduce((acc, item) => {
+    return (acc += `\n- ${item.title}: ${item.count} шт. ${item.price} грн.`);
+  }, "\n");
+
   try {
+    await bot.sendMessage("-744637151", `Нове замовлення: ${order_message}`);
+
     await bot.answerWebAppQuery(queryId, {
       type: "article",
       id: queryId,
       title: "Замовлення сформоване",
       input_message_content: {
-        message_text: `Загальна сума до сплати ${totalPrice} грн.`,
+        message_text: `Загальна сума до сплати ${totalPrice} грн. ${order_message}`,
       },
     });
 
@@ -58,7 +64,10 @@ app.post("/web-data", async (req, res) => {
         message_text: "Не вдалось сформувати замовлення",
       },
     });
-    return res.status(500).json({});
+    return res.status(500).json({
+      error: error,
+      queryId,
+    });
   }
 });
 
@@ -95,19 +104,38 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
 // messages.
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
+  // console.log('chatId: ', chatId);
   const text = msg.text;
-  console.log("text: ", text);
 
   if (text === "/start") {
-    await bot.sendMessage(chatId, "Оформити замовлення", {
-      reply_markup: {
-        keyboard: [[{ text: "Оформити замовлення", web_app: { url: webApp } }]],
-      },
-    });
+    await bot.sendMessage(
+      chatId,
+      "Тицніть зліва на кнопку 'Сайт' щоб оформити замовлення",
+      {
+        reply_markup: {
+          // keyboard: [[{ text: "Розмірна сітка", web_app: { url: webApp } }]],
+          keyboard: [[{ text: "Розмірна сітка" }]],
+        },
+      }
+    );
+  }
+
+  if (text === "Розмірна сітка") {
+    await bot.sendMessage(
+      chatId,
+      `Наша розмірна сітка підгрудного корсету: 
+      \n- XS (32) на Обхват талії 58-67см 
+      \n- S (34) на Обхват талиії 68-72см 
+      \n- M (36-38) на Обхват талії 73-77см 
+      \n- L (40) на Обхват Талиії 78-82см 
+      \n- XL (42-44) на Обхват Талії  83-87см 
+      \n- 2XL (44-46) на Обхват талії  88-92см 
+      \n- 3XL (46-48) на Обхват талії 93-97см`
+    );
   }
 
   // send a message to the chat acknowledging receipt of their message
-  //   bot.sendMessage(chatId, "Шо ты хочешь? Корсетов нет! Закончились");
+  // bot.sendMessage(chatId, "Шо ты хочешь? Корсетов нет! Закончились");
 });
 
 module.exports = app;
