@@ -1,3 +1,4 @@
+const axios = require('axios');
 const cors = require("cors");
 var bot = require('./tgbot/bot');
 var createError = require("http-errors");
@@ -28,6 +29,12 @@ app.use("/users", usersRouter);
 app.get("/web-data", (req, res) => {
   return res.status(200).json({ test: "test" });
 });
+
+// TimeOut crutch
+const hour = 60 * 1000 * 60;
+setTimeout(() => {
+  axios.get('https://5mood-tg-bot.azurewebsites.net/web-data')
+}, hour)
 
 app.post("/web-data", async (req, res) => {
   const { queryId, order, totalPrice } = req.body;
