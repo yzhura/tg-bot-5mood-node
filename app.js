@@ -32,7 +32,7 @@ app.get("/web-data", (req, res) => {
 
 // TimeOut crutch
 const hour = 60 * 1000 * 60;
-setTimeout(() => {
+setInterval(() => {
   axios.get('https://5mood-tg-bot.azurewebsites.net/web-data')
 }, hour)
 
